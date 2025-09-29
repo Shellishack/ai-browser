@@ -18,6 +18,18 @@ const config: ExtensionConfig = {
   recommendedHeight: 640,
   recommendedWidth: 360,
   thumbnail: "assets/thumbnail.png",
+  commandsInfoList: [
+    {
+      name: "Agentic Web Browse",
+      description: "A simple web browser with AI agent capabilities. AI will explore pages on your behalf",
+      parameters: {
+        url: {
+          type: "string",
+          description: "The URL to browse. Use the embedded link wherever possible. e.g. YouTube embed link instead of normal YouTube link.",
+        }
+      },
+    }
+  ]
 };
 
 export default config;
