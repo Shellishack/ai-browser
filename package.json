@@ -2,7 +2,7 @@
   "name": "browser_view",
   "displayName": "Browser View",
   "description": "A mini browser view to display web content within the Pulse Editor.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,8 +14,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
-    "@pulse-editor/react-api": "^0.1.1-beta.55",
-    "@pulse-editor/shared-utils": "^0.1.1-beta.55",
+    "@pulse-editor/react-api": "0.1.1-beta.56",
+    "@pulse-editor/shared-utils": "0.1.1-beta.56",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",

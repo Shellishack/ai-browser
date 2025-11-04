@@ -1,6 +1,6 @@
 import { AppConfig, AppTypeEnum } from "@pulse-editor/shared-utils";
 import packageJson from "./package.json" with { type: "json" };
-import { preRegisteredActions } from "./src/actions";
+import { preRegisteredActions } from "./preregistered-actions";
 
 /**
  * Pulse Editor Extension Config

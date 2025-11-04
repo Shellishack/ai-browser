@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { useRegisterAction } from "@pulse-editor/react-api";
-import { preRegisteredActions } from "../actions";
+import { useRegisterAction, useWorkspace } from "@pulse-editor/react-api";
+import { preRegisteredActions } from "../../preregistered-actions";
 
 export default function Browser() {
+  const { workspaceId } = useWorkspace();
+
   const [uri, setUri] = useState("");
 
   // Register command
@@ -13,6 +15,16 @@ export default function Browser() {
       return;
     },
     [uri]
+  );
+
+  useRegisterAction(
+    preRegisteredActions["pulse-app-dev-preview"],
+    async () => {
+      setUri(() =>
+        workspaceId ? `https://${workspaceId}.workspace.pulse-editor.com` : ""
+      );
+    },
+    [workspaceId]
   );
 
   return (
