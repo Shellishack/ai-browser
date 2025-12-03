@@ -46,7 +46,7 @@ const devStartupMessage = `
 
 const previewClientConfig: WebpackConfig & DevServerConfig = {
   entry: {
-    main: "./preview/frontend/index.tsx",
+    main: "./node_modules/.pulse/server/preview/frontend/index.js",
   },
   output: {
     path: path.resolve(__dirname, "dist/client"),
@@ -56,7 +56,8 @@ const previewClientConfig: WebpackConfig & DevServerConfig = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./preview/frontend/index.html",
+      template:
+        "./node_modules/.pulse/server/preview/frontend/index.html",
     }),
     new MiniCssExtractPlugin({
       filename: "globals.css",
@@ -86,6 +87,16 @@ const previewClientConfig: WebpackConfig & DevServerConfig = {
           } else {
             console.log("[client-preview] ✅ Reload finished");
           }
+
+          // Write pulse config to dist
+          fs.writeFileSync(
+            path.resolve(__dirname, "dist/client/pulse.config.json"),
+            JSON.stringify(pulseConfig, null, 2)
+          );
+          fs.writeFileSync(
+            path.resolve(__dirname, "dist/server/pulse.config.json"),
+            JSON.stringify(pulseConfig, null, 2)
+          );
         });
       },
     },
@@ -95,7 +106,11 @@ const previewClientConfig: WebpackConfig & DevServerConfig = {
   },
   module: {
     rules: [
-      { test: /\.tsx?$/, use: "ts-loader" },
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: [/node_modules/, /dist/],
+      },
       {
         test: /\.css$/i,
         use: [
@@ -122,7 +137,8 @@ const previewClientConfig: WebpackConfig & DevServerConfig = {
 
 /* This is temporary code to be moved to a different package in the future. */
 const previewHostConfig: WebpackConfig = {
-  entry: "./preview/backend/index.ts",
+  entry:
+    "./node_modules/@pulse-editor/cli/dist/lib/server/preview/backend/index.js",
   target: "async-node",
   output: {
     publicPath: "auto",
@@ -145,7 +161,7 @@ const previewHostConfig: WebpackConfig = {
             },
           },
         ],
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /dist/],
       },
     ],
   },
@@ -199,20 +215,15 @@ const mfClientConfig: WebpackConfig & DevServerConfig = {
       },
       shared: {
         react: {
-          requiredVersion: "19.1.0",
+          requiredVersion: "19.2.0",
           import: "react", // the "react" package will be used a provided and fallback module
           shareKey: "react", // under this name the shared module will be placed in the share scope
           shareScope: "default", // share scope with this name will be used
           singleton: true, // only a single version of the shared module is allowed
         },
         "react-dom": {
-          requiredVersion: "19.1.0",
+          requiredVersion: "19.2.0",
           singleton: true, // only a single version of the shared module is allowed
-        },
-        // Share Workbox configuration as a module
-        "workbox-webpack-plugin": {
-          singleton: true,
-          requiredVersion: "^7.3.0",
         },
       },
     }),
@@ -290,7 +301,7 @@ const mfClientConfig: WebpackConfig & DevServerConfig = {
             loader: "postcss-loader",
           },
         ],
-        exclude: [/node_modules/, /dist/],
+        exclude: [/dist/],
       },
     ],
   },
@@ -478,6 +489,10 @@ const mfServerConfig: WebpackConfig = {
 const config =
   process.env.PREVIEW === "true"
     ? [previewClientConfig, previewHostConfig, mfServerConfig]
+    : process.env.BUILD_TARGET === "server"
+    ? [mfServerConfig]
+    : process.env.BUILD_TARGET === "client"
+    ? [mfClientConfig]
     : [mfClientConfig, mfServerConfig];
 
 export default config as WebpackConfig[];
